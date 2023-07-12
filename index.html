@@ -178,7 +178,7 @@
             <div class="tab" data-tab="discord">Discord</div>
         </div>
 
-        <div class="tab-content" id="embed-creator">
+        <div class="tab-content active" id="embed-creator">
             <form id="discord-form">
                 <div class="form-group">
                     <label for="webhook">Webhook URL:</label>
@@ -321,6 +321,10 @@
                 body.classList.remove("dark-mode");
             }
         });
+
+        // Activate the first tab
+        tabs[0].classList.add("active");
+        document.getElementById(tabs[0].getAttribute("data-tab")).style.display = "block";
     </script>
 </body>
 </html>
