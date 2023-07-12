@@ -34,6 +34,14 @@
             background-color: #36393F;
             color: #FFF;
         }
+        input[type="color"] {
+            appearance: none;
+            width: 100%;
+            height: 40px;
+            padding: 0;
+            border: none;
+            background-color: transparent;
+        }
         button {
             padding: 10px 20px;
             background-color: #7289DA;
@@ -121,36 +129,36 @@
             </div>
             <div class="form-group">
                 <label for="title">Title:</label>
-                <input type="text" id="title" name="title" placeholder="Enter the title" required>
+                <input type="text" id="title" name="title" placeholder="Enter the title">
             </div>
             <div class="form-group">
                 <label for="description">Description:</label>
-                <textarea id="description" name="description" placeholder="Enter the description" required></textarea>
+                <textarea id="description" name="description" placeholder="Enter the description"></textarea>
             </div>
             <div class="form-group">
                 <label for="color">Color:</label>
-                <input type="text" id="color" name="color" placeholder="Enter the color code" required>
+                <input type="color" id="color" name="color" value="#7289DA">
             </div>
             <div class="form-group">
                 <label for="author">Author:</label>
-                <input type="text" id="author" name="author" placeholder="Enter the author" required>
+                <input type="text" id="author" name="author" placeholder="Enter the author">
             </div>
             <div class="form-group">
                 <label for="thumbnail">Thumbnail URL:</label>
-                <input type="text" id="thumbnail" name="thumbnail" placeholder="Enter the thumbnail URL" required>
+                <input type="text" id="thumbnail" name="thumbnail" placeholder="Enter the thumbnail URL">
             </div>
             <div class="form-group">
                 <label for="footer">Footer:</label>
-                <input type="text" id="footer" name="footer" placeholder="Enter the footer" required>
+                <input type="text" id="footer" name="footer" placeholder="Enter the footer">
             </div>
             <div class="form-group">
                 <label for="footerIcon">Footer Icon URL:</label>
-                <input type="text" id="footerIcon" name="footerIcon" placeholder="Enter the footer icon URL" required>
+                <input type="text" id="footerIcon" name="footerIcon" placeholder="Enter the footer icon URL">
             </div>
             <div class="form-group">
                 <label for="timestamp">Timestamp:</label>
-                <input type="text" id="timestamp" name="timestamp" placeholder="Enter the timestamp"
-                                </div>
+                <input type="text" id="timestamp" name="timestamp" placeholder="Enter the timestamp">
+            </div>
             <button type="submit">Submit</button>
         </form>
 
@@ -171,7 +179,7 @@
             event.preventDefault();
             var webhookURL = document.getElementById("webhook").value;
             var title = document.getElementById("title").value;
-            var description = document.getElementById("description").value;
+                        var description = document.getElementById("description").value;
             var color = document.getElementById("color").value;
             var author = document.getElementById("author").value;
             var thumbnail = document.getElementById("thumbnail").value;
