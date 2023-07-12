@@ -5,12 +5,19 @@
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #2C2F33;
+            color: #FFF;
             padding: 20px;
-            transition: background-color 0.3s ease;
         }
         .container {
-            max-width: 600px;
+            max-width: 800px;
             margin: 0 auto;
+        }
+        h1 {
+            color: #7289DA;
+            text-align: center;
+            margin-top: 0;
+            margin-bottom: 40px;
         }
         .form-group {
             margin-bottom: 15px;
@@ -24,6 +31,8 @@
             padding: 10px;
             border: 1px solid #CCC;
             border-radius: 4px;
+            background-color: #36393F;
+            color: #FFF;
         }
         button {
             padding: 10px 20px;
@@ -34,14 +43,15 @@
             cursor: pointer;
         }
         .embed {
-            background-color: #2C2F33;
-            padding: 10px;
-            margin-top: 20px;
+            background-color: #36393F;
+            padding: 20px;
+            margin-top: 40px;
             border-radius: 4px;
         }
         .embed-title {
             font-weight: bold;
             color: #FFF;
+            margin-top: 0;
         }
         .embed-field {
             color: #FFF;
@@ -49,6 +59,7 @@
         }
         .embed-description {
             color: #FFF;
+            white-space: pre-wrap;
         }
         .embed-color {
             margin-top: 10px;
@@ -97,12 +108,12 @@
 </head>
 <body>
     <div class="container">
+        <h1>Discord Embed Generator</h1>
         <div class="toggle-container">
             <label for="dark-mode" class="toggle-label">Donkere Modus</label>
             <input type="checkbox" id="dark-mode" class="toggle-checkbox">
         </div>
 
-        <h1>Discord Embed Generator</h1>
         <form id="discord-form">
             <div class="form-group">
                 <label for="title">Titel:</label>
@@ -149,35 +160,30 @@
             <p class="embed-field embed-color"></p>
             <p class="embed-field embed-author"></p>
             <img class="embed-field embed-thumbnail" src="" alt="Thumbnail">
-            <p class="embed-field embed-footer"></p>
-            <img class="embed-field embed-footer-icon" src="" alt="Footer Icon">
-            <p class="embed-field embed-timestamp"></p>
-        </div>
-    </div>
+            <p class="embed-field embed-footer">
+                <script>
+    document.getElementById("discord-form").addEventListener("submit", function(event) {
+        event.preventDefault();
+        var title = document.getElementById("title").value;
+        var description = document.getElementById("description").value;
+        var color = document.getElementById("color").value;
+        var author = document.getElementById("author").value;
+        var thumbnail = document.getElementById("thumbnail").value;
+        var footer = document.getElementById("footer").value;
+        var footerIcon = document.getElementById("footerIcon").value;
+        var timestamp = document.getElementById("timestamp").value;
+        var webhookURL = document.getElementById("webhook").value;
 
-    <script>
-        document.getElementById("discord-form").addEventListener("submit", function(event) {
-            event.preventDefault();
-            var title = document.getElementById("title").value;
-            var description = document.getElementById("description").value;
-            var color = document.getElementById("color").value;
-            var author = document.getElementById("author").value;
-            var thumbnail = document.getElementById("thumbnail").value;
-            var footer = document.getElementById("footer").value;
-            var footerIcon = document.getElementById("footerIcon").value;
-            var timestamp = document.getElementById("timestamp").value;
-            var webhookURL = document.getElementById("webhook").value;
-
-            var embedContainer = document.getElementById("embed-container");
-            embedContainer.style.display = "block";
-            embedContainer.getElementsByClassName("embed-title")[0].textContent = title;
-            embedContainer.getElementsByClassName("embed-description")[0].textContent = description;
-            embedContainer.getElementsByClassName("embed-color")[0].textContent = "Kleur: " + color;
-            embedContainer.getElementsByClassName("embed-author")[0].textContent = "Auteur: " + author;
-            embedContainer.getElementsByClassName("embed-thumbnail")[0].src = thumbnail;
-            embedContainer.getElementsByClassName("embed-footer")[0].textContent = "Voettekst: " + footer;
-            embedContainer.getElementsByClassName("embed-footer-icon")[0].src = footerIcon;
-            embedContainer.getElementsByClassName("embed-timestamp")[0].textContent = "Tijdstempel: " + timestamp;
+        var embedContainer = document.getElementById("embed-container");
+        embedContainer.style.display = "block";
+        embedContainer.getElementsByClassName("embed-title")[0].textContent = title;
+        embedContainer.getElementsByClassName("embed-description")[0].textContent = description;
+        embedContainer.getElementsByClassName("embed-color")[0].textContent = "Kleur: " + color;
+        embedContainer.getElementsByClassName("embed-author")[0].textContent = "Auteur: " + author;
+        embedContainer.getElementsByClassName("embed-thumbnail")[0].src = thumbnail;
+        embedContainer.getElementsByClassName("embed-footer")[0].textContent = "Voettekst: " + footer;
+        embedContainer.getElementsByClassName("embed-footer-icon")[0].src = footerIcon;
+        embedContainer.getElementsByClassName("embed-timestamp")[0].textContent = "Tijdstempel: " + timestamp;
 
         // Stuur de gegevens naar de Discord Webhook
         var data = {
@@ -207,5 +213,3 @@
         });
     });
 </script>
-</body>
-</html>
