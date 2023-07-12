@@ -8,6 +8,7 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             padding: 20px;
             transition: background-color 0.3s ease;
+            color: #FFF;
         }
         .container {
             background-color: #2C2F33;
@@ -179,6 +180,33 @@
         .dark-mode {
             background-color: #202225;
         }
+
+        /* Theme tab */
+        .theme-tab {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .theme-tab label {
+            display: inline-block;
+            margin-bottom: 5px;
+        }
+        .theme-tab input[type="file"] {
+            margin-top: 5px;
+        }
+        .theme-tab .theme-preview {
+            margin-top: 20px;
+            width: 100%;
+            height: 200px;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            border-radius: 4px;
+            transition: background 0.3s ease;
+        }
+        .theme-tab .theme-preview img {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -194,9 +222,10 @@
             <div class="tab active" data-tab="embed-creator">Embed Creator</div>
             <div class="tab" data-tab="embed-preview">Embed Preview</div>
             <div class="tab" data-tab="discord">Discord</div>
+            <div class="tab" data-tab="theme">Theme</div>
         </div>
 
-        <div class="tab-content active" id="embed-creator">
+        <div class="tab-content" id="embed-creator">
             <form id="discord-form">
                 <div class="form-group">
                     <label for="webhook">Webhook URL:</label>
@@ -254,6 +283,24 @@
         <div class="tab-content" id="discord">
             <h2 class="embed-title">Join our Discord!</h2>
             <a href="https://discord.gg/3B3F29S9CQ" class="discord-button" target="_blank">Join!</a>
+        </div>
+
+        <div class="tab-content" id="theme">
+            <div class="theme-tab">
+                <label for="background-color">Background Color:</label>
+                <input type="color" id="background-color" name="background-color" value="#36393F">
+
+                <label for="background-image">Background Image:</label>
+                <input type="file" id="background-image" name="background-image">
+
+                <label for="text-color">Text Color:</label>
+                <input type="color" id="text-color" name="text-color" value="#FFF">
+
+                <label for="upload-video">Upload Video:</label>
+                <input type="file" id="upload-video" name="upload-video">
+
+                <div class="theme-preview"></div>
+            </div>
         </div>
     </div>
 
@@ -321,11 +368,11 @@
                 });
 
                 tabContents.forEach(function(content) {
-                    content.style.display = "none";
+                    content.classList.remove("active");
                 });
 
                 this.classList.add("active");
-                document.getElementById(tabId).style.display = "block";
+                document.getElementById(tabId).classList.add("active");
             });
         });
 
@@ -341,40 +388,52 @@
         });
 
         // Activate the first tab
-        tabs[0].classList.add("active");
-        document.getElementById(tabs[0].getAttribute("data-tab")).style.display = "block";
+        tabs[0].click();
 
-        // Add animations and transitions
-        tabs.forEach(function(tab) {
-            tab.addEventListener("mouseenter", function() {
-                this.style.transform = "scale(1.05)";
-            });
+        // Theme tab functionality
+        var backgroundColorInput = document.getElementById("background-color");
+        var backgroundImageInput = document.getElementById("background-image");
+        var textColorInput = document.getElementById("text-color");
+        var uploadVideoInput = document.getElementById("upload-video");
+        var themePreview = document.querySelector(".theme-preview");
 
-            tab.addEventListener("mouseleave", function() {
-                this.style.transform = "scale(1)";
+        backgroundColorInput.addEventListener("input", function() {
+            body.style.backgroundColor = this.value;
+            themePreview.style.backgroundColor = this.value;
+        });
+
+        backgroundImageInput.addEventListener("change", function() {
+            var file = this.files[0];
+            var reader = new FileReader();
+
+            reader.onload = function(e) {
+                body.style.backgroundImage = "url(" + e.target.result + ")";
+                themePreview.style.backgroundImage = "url(" + e.target.result + ")";
+                themePreview.style.backgroundSize = "cover";
+                themePreview.style.backgroundPosition = "center";
+                themePreview.style.backgroundRepeat = "no-repeat";
+            };
+
+            reader.readAsDataURL(file);
+        });
+
+        textColorInput.addEventListener("input", function() {
+            body.style.color = this.value;
+            tabs.forEach(function(tab) {
+                tab.style.color = textColorInput.value;
             });
         });
 
-        var formInputs = document.querySelectorAll("input[type='text'], textarea, select");
+        uploadVideoInput.addEventListener("change", function() {
+            var file = this.files[0];
+            var reader = new FileReader();
 
-        formInputs.forEach(function(input) {
-            input.addEventListener("focus", function() {
-                this.style.border = "1px solid #7289DA";
-            });
+            reader.onload = function(e) {
+                body.style.backgroundImage = "url(" + e.target.result + ")";
+                themePreview.innerHTML = "<video src='" + e.target.result + "' autoplay loop muted></video>";
+            };
 
-            input.addEventListener("blur", function() {
-                this.style.border = "1px solid #CCC";
-            });
-        });
-
-        var submitButton = document.querySelector("button[type='submit']");
-
-        submitButton.addEventListener("mouseenter", function() {
-            this.style.backgroundColor = "#5A6C8E";
-        });
-
-        submitButton.addEventListener("mouseleave", function() {
-            this.style.backgroundColor = "#7289DA";
+            reader.readAsDataURL(file);
         });
     </script>
 </body>
