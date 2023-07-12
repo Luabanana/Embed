@@ -161,7 +161,7 @@
             margin-top: 20px;
             border-radius: 4px;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            transition: background-color 0.3s ease;
+            transition: background 0.3s ease;
         }
         .discord-button {
             display: inline-block;
@@ -206,6 +206,31 @@
         }
         .theme-tab .theme-preview img {
             display: none;
+        }
+        .theme-tab .toggle-label {
+            margin-bottom: 5px;
+            transition: color 0.3s ease;
+        }
+        .theme-tab .toggle-checkbox {
+            background-color: #555;
+            transition: background-color 0.3s ease;
+        }
+        .theme-tab .toggle-checkbox:checked {
+            background-color: #7289DA;
+        }
+        .rainbow-text {
+            animation: rainbow 5s infinite;
+        }
+
+        @keyframes rainbow {
+            0% { color: red; }
+            14% { color: orange; }
+            28% { color: yellow; }
+            42% { color: green; }
+            57% { color: blue; }
+            71% { color: indigo; }
+            85% { color: violet; }
+            100% { color: red; }
         }
     </style>
 </head>
@@ -295,6 +320,11 @@
 
                 <label for="text-color">Text Color:</label>
                 <input type="color" id="text-color" name="text-color" value="#FFF">
+
+                <div class="toggle-container">
+                    <label for="rainbow-text-toggle" class="toggle-label">Rainbow Text</label>
+                    <input type="checkbox" id="rainbow-text-toggle" class="toggle-checkbox">
+                </div>
 
                 <label for="upload-video">Upload Video:</label>
                 <input type="file" id="upload-video" name="upload-video">
@@ -387,53 +417,19 @@
             }
         });
 
-        // Activate the first tab
-        tabs[0].click();
+        var rainbowTextToggle = document.getElementById("rainbow-text-toggle");
+        var textFields = document.querySelectorAll("input[type='text'], textarea, select");
 
-        // Theme tab functionality
-        var backgroundColorInput = document.getElementById("background-color");
-        var backgroundImageInput = document.getElementById("background-image");
-        var textColorInput = document.getElementById("text-color");
-        var uploadVideoInput = document.getElementById("upload-video");
-        var themePreview = document.querySelector(".theme-preview");
-
-        backgroundColorInput.addEventListener("input", function() {
-            body.style.backgroundColor = this.value;
-            themePreview.style.backgroundColor = this.value;
-        });
-
-        backgroundImageInput.addEventListener("change", function() {
-            var file = this.files[0];
-            var reader = new FileReader();
-
-            reader.onload = function(e) {
-                body.style.backgroundImage = "url(" + e.target.result + ")";
-                themePreview.style.backgroundImage = "url(" + e.target.result + ")";
-                themePreview.style.backgroundSize = "cover";
-                themePreview.style.backgroundPosition = "center";
-                themePreview.style.backgroundRepeat = "no-repeat";
-            };
-
-            reader.readAsDataURL(file);
-        });
-
-        textColorInput.addEventListener("input", function() {
-            body.style.color = this.value;
-            tabs.forEach(function(tab) {
-                tab.style.color = textColorInput.value;
-            });
-        });
-
-        uploadVideoInput.addEventListener("change", function() {
-            var file = this.files[0];
-            var reader = new FileReader();
-
-            reader.onload = function(e) {
-                body.style.backgroundImage = "url(" + e.target.result + ")";
-                themePreview.innerHTML = "<video src='" + e.target.result + "' autoplay loop muted></video>";
-            };
-
-            reader.readAsDataURL(file);
+        rainbowTextToggle.addEventListener("change", function() {
+            if (this.checked) {
+                textFields.forEach(function(field) {
+                    field.classList.add("rainbow-text");
+                });
+            } else {
+                textFields.forEach(function(field) {
+                    field.classList.remove("rainbow-text");
+                });
+            }
         });
     </script>
 </body>
