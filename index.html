@@ -5,9 +5,8 @@
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #36393F;
-            color: #FFF;
             padding: 20px;
+            transition: background-color 0.3s ease;
         }
         .container {
             max-width: 600px;
@@ -55,10 +54,54 @@
             margin-top: 10px;
             color: #FFF;
         }
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            margin-bottom: 20px;
+        }
+        .toggle-label {
+            margin-right: 10px;
+            font-weight: bold;
+            color: #FFF;
+        }
+        .toggle-checkbox {
+            appearance: none;
+            width: 40px;
+            height: 20px;
+            background-color: #555;
+            outline: none;
+            border-radius: 10px;
+            position: relative;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .toggle-checkbox:before {
+            content: "";
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 16px;
+            height: 16px;
+            background-color: #FFF;
+            border-radius: 50%;
+            transition: transform 0.3s ease;
+        }
+        .toggle-checkbox:checked {
+            background-color: #7289DA;
+        }
+        .toggle-checkbox:checked:before {
+            transform: translateX(20px);
+        }
     </style>
 </head>
 <body>
     <div class="container">
+        <div class="toggle-container">
+            <label for="dark-mode" class="toggle-label">Donkere Modus</label>
+            <input type="checkbox" id="dark-mode" class="toggle-checkbox">
+        </div>
+
         <h1>Discord Embed Generator</h1>
         <form id="discord-form">
             <div class="form-group">
@@ -93,6 +136,10 @@
                 <label for="timestamp">Tijdstempel:</label>
                 <input type="text" id="timestamp" name="timestamp" placeholder="Voer de tijdstempel in">
             </div>
+            <div class="form-group">
+                <label for="webhook">Webhook URL:</label>
+                <input type="text" id="webhook" name="webhook" placeholder="Voer de Discord Webhook-URL in">
+            </div>
             <button type="submit">Verzenden</button>
         </form>
 
@@ -119,6 +166,7 @@
             var footer = document.getElementById("footer").value;
             var footerIcon = document.getElementById("footerIcon").value;
             var timestamp = document.getElementById("timestamp").value;
+            var webhookURL = document.getElementById("webhook").value;
 
             var embedContainer = document.getElementById("embed-container");
             embedContainer.style.display = "block";
@@ -130,7 +178,34 @@
             embedContainer.getElementsByClassName("embed-footer")[0].textContent = "Voettekst: " + footer;
             embedContainer.getElementsByClassName("embed-footer-icon")[0].src = footerIcon;
             embedContainer.getElementsByClassName("embed-timestamp")[0].textContent = "Tijdstempel: " + timestamp;
+
+        // Stuur de gegevens naar de Discord Webhook
+        var data = {
+            username: author,
+            embeds: [
+                {
+                    title: title,
+                    description: description,
+                    color: parseInt(color.replace("#", ""), 16),
+                    thumbnail: { url: thumbnail },
+                    footer: { text: footer, icon_url: footerIcon },
+                    timestamp: timestamp
+                }
+            ]
+        };
+
+        fetch(webhookURL, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        }).then(function(response) {
+            console.log("Bericht succesvol naar de webhook verzonden.");
+        }).catch(function(error) {
+            console.error("Er is een fout opgetreden bij het verzenden van het bericht naar de webhook:", error);
         });
-    </script>
+    });
+</script>
 </body>
-</html
+</html>
