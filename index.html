@@ -4,10 +4,13 @@
     <title>Discord Embed Generator</title>
     <style>
         body {
+            background-color: #36393F;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             padding: 20px;
         }
         .container {
+            background-color: #2C2F33;
+            border-radius: 4px;
             max-width: 800px;
             margin: 0 auto;
         }
@@ -119,19 +122,23 @@
             flex: 1;
             padding: 10px;
             text-align: center;
+            background-color: #2C2F33;
             color: #FFF;
             cursor: pointer;
             transition: background-color 0.3s ease;
         }
-        .tab:hover {
+        .tab:hover, .tab.active {
             background-color: #7289DA;
         }
-        .tab.active {
-            background-color: #7289DA;
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
         }
         .embed-preview-container {
             padding: 20px;
-            background-color: #36393F;
+            background-color: #2C2F33;
             color: #FFF;
             margin-top: 20px;
             border-radius: 4px;
@@ -150,6 +157,9 @@
         }
         .discord-button:hover {
             background-color: #5A6C8E;
+        }
+        .dark-mode {
+            background-color: #202225;
         }
     </style>
 </head>
