@@ -5,8 +5,6 @@
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #2C2F33;
-            color: #FFF;
             padding: 20px;
         }
         .container {
@@ -112,65 +110,122 @@
         .toggle-checkbox:checked:before {
             transform: translateX(20px);
         }
+        .tabs {
+            display: flex;
+            background-color: #36393F;
+            margin-bottom: 20px;
+        }
+        .tab {
+            flex: 1;
+            padding: 10px;
+            text-align: center;
+            color: #FFF;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .tab:hover {
+            background-color: #7289DA;
+        }
+        .tab.active {
+            background-color: #7289DA;
+        }
+        .embed-preview-container {
+            padding: 20px;
+            background-color: #36393F;
+            color: #FFF;
+            margin-top: 20px;
+            border-radius: 4px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .discord-button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #7289DA;
+            color: #FFF;
+            border: none;
+            border-radius: 4px;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+            cursor: pointer;
+        }
+        .discord-button:hover {
+            background-color: #5A6C8E;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Discord Embed Generator</h1>
+
         <div class="toggle-container">
             <label for="dark-mode" class="toggle-label">Dark Mode</label>
             <input type="checkbox" id="dark-mode" class="toggle-checkbox">
         </div>
 
-        <form id="discord-form">
-            <div class="form-group">
-                <label for="webhook">Webhook URL:</label>
-                <input type="text" id="webhook" name="webhook" placeholder="Enter Discord Webhook URL" required>
-            </div>
-            <div class="form-group">
-                <label for="title">Title:</label>
-                <input type="text" id="title" name="title" placeholder="Enter the title">
-            </div>
-            <div class="form-group">
-                <label for="description">Description:</label>
-                <textarea id="description" name="description" placeholder="Enter the description"></textarea>
-            </div>
-            <div class="form-group">
-                <label for="color">Color:</label>
-                <input type="color" id="color" name="color" value="#7289DA">
-            </div>
-            <div class="form-group">
-                <label for="author">Author:</label>
-                <input type="text" id="author" name="author" placeholder="Enter the author">
-            </div>
-            <div class="form-group">
-                <label for="thumbnail">Thumbnail URL:</label>
-                <input type="text" id="thumbnail" name="thumbnail" placeholder="Enter the thumbnail URL">
-            </div>
-            <div class="form-group">
-                <label for="footer">Footer:</label>
-                <input type="text" id="footer" name="footer" placeholder="Enter the footer">
-            </div>
-            <div class="form-group">
-                <label for="footerIcon">Footer Icon URL:</label>
-                <input type="text" id="footerIcon" name="footerIcon" placeholder="Enter the footer icon URL">
-            </div>
-            <div class="form-group">
-                <label for="timestamp">Timestamp:</label>
-                <input type="text" id="timestamp" name="timestamp" placeholder="Enter the timestamp">
-            </div>
-            <button type="submit">Submit</button>
-        </form>
+        <div class="tabs">
+            <div class="tab active" data-tab="embed-creator">Embed Creator</div>
+            <div class="tab" data-tab="embed-preview">Embed Preview</div>
+            <div class="tab" data-tab="discord">Discord</div>
+        </div>
 
-        <div id="embed-container" class="embed" style="display: none;">
-            <h2 class="embed-title"></h2>
-            <p class="embed-field embed-description"></p>
-            <p class="embed-field embed-color"></p>
-            <p class="embed-field embed-author"></p>
-            <img class="embed-field embed-thumbnail" src="" alt="Thumbnail">
-            <p class="embed-field embed-footer"></p>
-            <img class="embed-field embed-footer-icon" src="" alt="Footer Icon">
-            <p class="embed-field embed-timestamp"></p>
+        <div class="tab-content" id="embed-creator">
+            <form id="discord-form">
+                <div class="form-group">
+                    <label for="webhook">Webhook URL:</label>
+                    <input type="text" id="webhook" name="webhook" placeholder="Enter Discord Webhook URL" required>
+                </div>
+                <div class="form-group">
+                    <label for="title">Title:</label>
+                    <input type="text" id="title" name="title" placeholder="Enter the title">
+                </div>
+                <div class="form-group">
+                    <label for="description">Description:</label>
+                    <textarea id="description" name="description" placeholder="Enter the description"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="color">Color:</label>
+                    <input type="color" id="color" name="color" value="#7289DA">
+                </div>
+                <div class="form-group">
+                    <label for="author">Author:</label>
+                    <input type="text" id="author" name="author" placeholder="Enter the author">
+                </div>
+                <div class="form-group">
+                    <label for="thumbnail">Thumbnail URL:</label>
+                    <input type=text" id="thumbnail" name="thumbnail" placeholder="Enter the thumbnail URL">
+                </div>
+                <div class="form-group">
+                    <label for="footer">Footer:</label>
+                    <input type="text" id="footer" name="footer" placeholder="Enter the footer">
+                </div>
+                <div class="form-group">
+                    <label for="footerIcon">Footer Icon URL:</label>
+                    <input type="text" id="footerIcon" name="footerIcon" placeholder="Enter the footer icon URL">
+                </div>
+                <div class="form-group">
+                    <label for="timestamp">Timestamp:</label>
+                    <input type="text" id="timestamp" name="timestamp" placeholder="Enter the timestamp">
+                </div>
+                <button type="submit">Submit</button>
+            </form>
+        </div>
+
+        <div class="tab-content" id="embed-preview" style="display: none;">
+            <div class="embed-preview-container">
+                <h2 class="embed-title"></h2>
+                <p class="embed-field embed-description"></p>
+                <p class="embed-field embed-color"></p>
+                <p class="embed-field embed-author"></p>
+                <img class="embed-field embed-thumbnail" src="" alt="Thumbnail">
+                <p class="embed-field embed-footer"></p>
+                <img class="embed-field embed-footer-icon" src="" alt="Footer Icon">
+                <p class="embed-field embed-timestamp"></p>
+            </div>
+        </div>
+
+        <div class="tab-content" id="discord" style="display: none;">
+            <h2 class="embed-title">Join our Discord!</h2>
+            <a href="https://discord.gg/3B3F29S9CQ" class="discord-button" target="_blank">Join!</a>
         </div>
     </div>
 
@@ -179,7 +234,7 @@
             event.preventDefault();
             var webhookURL = document.getElementById("webhook").value;
             var title = document.getElementById("title").value;
-                        var description = document.getElementById("description").value;
+            var description = document.getElementById("description").value;
             var color = document.getElementById("color").value;
             var author = document.getElementById("author").value;
             var thumbnail = document.getElementById("thumbnail").value;
@@ -187,7 +242,7 @@
             var footerIcon = document.getElementById("footerIcon").value;
             var timestamp = document.getElementById("timestamp").value;
 
-            var embedContainer = document.getElementById("embed-container");
+            var embedContainer = document.getElementById("embed-preview");
             embedContainer.style.display = "block";
             embedContainer.getElementsByClassName("embed-title")[0].textContent = title;
             embedContainer.getElementsByClassName("embed-description")[0].textContent = description;
@@ -224,6 +279,37 @@
             }).catch(function(error) {
                 console.error("An error occurred while sending the message to the webhook:", error);
             });
+        });
+
+        var tabs = document.querySelectorAll(".tab");
+        var tabContents = document.querySelectorAll(".tab-content");
+
+        tabs.forEach(function(tab) {
+            tab.addEventListener("click", function() {
+                var tabId = this.getAttribute("data-tab");
+
+                tabs.forEach(function(tab) {
+                    tab.classList.remove("active");
+                });
+
+                tabContents.forEach(function(content) {
+                    content.style.display = "none";
+                });
+
+                this.classList.add("active");
+                document.getElementById(tabId).style.display = "block";
+            });
+        });
+
+        var darkModeToggle = document.getElementById("dark-mode");
+        var body = document.querySelector("body");
+
+        darkModeToggle.addEventListener("change", function() {
+            if (this.checked) {
+                body.classList.add("dark-mode");
+            } else {
+                body.classList.remove("dark-mode");
+            }
         });
     </script>
 </body>
