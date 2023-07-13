@@ -207,6 +207,45 @@
         .theme-tab .theme-preview img {
             display: none;
         }
+        /* Feedback tab */
+        .feedback-tab {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            padding: 20px;
+            background-color: #2C2F33;
+            color: #FFF;
+            margin-top: 20px;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+        }
+        .feedback-tab label {
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .feedback-tab input[type="text"],
+        .feedback-tab textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #CCC;
+            border-radius: 4px;
+            background-color: #36393F;
+            color: #FFF;
+            transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+        }
+        .feedback-tab button {
+            padding: 10px 20px;
+            background-color: #7289DA;
+            color: #FFF;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .feedback-tab button:hover {
+            background-color: #5A6C8E;
+        }
+
     </style>
 </head>
 <body>
@@ -264,18 +303,17 @@
                     <label for="timestamp">Timestamp:</label>
                     <input type="text" id="timestamp" name="timestamp" placeholder="Enter the timestamp">
                 </div>
-                <div id="fields-container">
-                    <div class="form-group">
-                        <label>Fields:</label>
-                        <div class="fields">
-                            <div class="field">
-                                <input type="text" placeholder="Field Name">
-                                <input type="text" placeholder="Field Value">
-                            </div>
+                <div class="form-group">
+                    <label for="fields">Fields:</label>
+                    <div id="fields-container">
+                        <div class="field-row">
+                            <input type="text" class="field-name" placeholder="Enter the field name">
+                            <input type="text" class="field-value" placeholder="Enter the field value">
+                            <button class="remove-field">Remove</button>
                         </div>
                     </div>
+                    <button id="add-field">Add Field</button>
                 </div>
-                <button type="button" onclick="addField()">Add Field</button>
                 <button type="submit">Submit</button>
             </form>
         </div>
@@ -290,6 +328,7 @@
                 <p class="embed-field embed-footer"></p>
                 <img class="embed-field embed-footer-icon" src="" alt="Footer Icon">
                 <p class="embed-field embed-timestamp"></p>
+                <div id="field-preview"></div>
             </div>
         </div>
 
@@ -317,87 +356,18 @@
         </div>
 
         <div class="tab-content" id="feedback">
-            <h2 class="embed-title">Feedback</h2>
-            <div class="feedback-form">
-                <textarea id="feedback-text" placeholder="Type your feedback here"></textarea>
-                <button id="feedback-submit" onclick="sendFeedback()">Send!</button>
+            <div class="feedback-tab">
+                <h2 class="embed-title">Feedback!</h2>
+                <label for="feedback-text">Your Feedback:</label>
+                <textarea id="feedback-text" name="feedback-text" placeholder="Enter your feedback"></textarea>
+                <button id="send-feedback">Send</button>
             </div>
         </div>
     </div>
 
     <script>
-        function updateEmbedPreview() {
-            var embedContainer = document.getElementById("embed-preview");
-            embedContainer.getElementsByClassName("embed-title")[0].textContent = document.getElementById("title").value;
-            embedContainer.getElementsByClassName("embed-description")[0].textContent = document.getElementById("description").value;
-            embedContainer.getElementsByClassName("embed-color")[0].textContent = "Color: " + document.getElementById("color").value;
-            embedContainer.getElementsByClassName("embed-author")[0].textContent = "Author: " + document.getElementById("author").value;
-            embedContainer.getElementsByClassName("embed-thumbnail")[0].src = document.getElementById("thumbnail").value;
-            embedContainer.getElementsByClassName("embed-footer")[0].textContent = "Footer: " + document.getElementById("footer").value;
-            embedContainer.getElementsByClassName("embed-footer-icon")[0].src = document.getElementById("footerIcon").value;
-            embedContainer.getElementsByClassName("embed-timestamp")[0].textContent = "Timestamp: " + document.getElementById("timestamp").value;
-
-            embedContainer.style.backgroundColor = document.getElementById("color").value;
-        }
-
-        function sendFeedback() {
-            var feedbackText = document.getElementById("feedback-text").value;
-            var feedbackButton = document.getElementById("feedback-submit");
-
-            feedbackButton.disabled = true;
-            setTimeout(function() {
-                feedbackButton.disabled = false;
-            }, 60000);
-
-            var webhookURL = "https://discord.com/api/webhooks/1128951001433522217/8IPvEmddQJNK-NNUTPGMMwAmYAQLfp8XeApXObMFigSkL_Z2eWEd3RnPwr4KFJWINLcx";
-
-            var data = {
-                content: feedbackText
-            };
-
-            fetch(webhookURL, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(data)
-            })
-            .then(function(response) {
-                console.log("Feedback sent successfully.");
-            })
-            .catch(function(error) {
-                console.error("An error occurred while sending the feedback:", error);
-            });
-
-            document.getElementById("feedback-text").value = "";
-        }
-
-        function addField() {
-            var fieldsContainer = document.getElementById("fields-container");
-            var fields = fieldsContainer.getElementsByClassName("fields")[0];
-
-            var field = document.createElement("div");
-            field.className = "field";
-
-            var nameInput = document.createElement("input");
-            nameInput.type = "text";
-            nameInput.placeholder = "Field Name";
-
-            var valueInput = document.createElement("input");
-            valueInput.type = "text";
-            valueInput.placeholder = "Field Value";
-
-            field.appendChild(nameInput);
-            field.appendChild(valueInput);
-
-            fields.appendChild(field);
-        }
-
         document.getElementById("discord-form").addEventListener("submit", function(event) {
             event.preventDefault();
-
-            updateEmbedPreview();
-
             var webhookURL = document.getElementById("webhook").value;
             var title = document.getElementById("title").value;
             var description = document.getElementById("description").value;
@@ -408,42 +378,53 @@
             var footerIcon = document.getElementById("footerIcon").value;
             var timestamp = document.getElementById("timestamp").value;
 
-            var embedFields = [];
-            var fieldsContainer = document.getElementById("fields-container");
-            var fields = fieldsContainer.getElementsByClassName("field");
-            for (var i = 0; i < fields.length; i++) {
-                var nameInput = fields[i].getElementsByTagName("input")[0];
-                var valueInput = fields[i].getElementsByTagName("input")[1];
+            var fields = [];
+            var fieldNames = document.getElementsByClassName("field-name");
+            var fieldValues = document.getElementsByClassName("field-value");
 
-                var field = {
-                    name: nameInput.value,
-                    value: valueInput.value
-                };
-
-                embedFields.push(field);
+            for (var i = 0; i < fieldNames.length; i++) {
+                var fieldName = fieldNames[i].value;
+                var fieldValue = fieldValues[i].value;
+                if (fieldName && fieldValue) {
+                    fields.push({ name: fieldName, value: fieldValue });
+                }
             }
 
-            var embedData = {
-                title: title,
-                description: description,
-                color: parseInt(color.replace("#", ""), 16),
-                author: {
-                    name: author
-                },
-                thumbnail: {
-                    url: thumbnail
-                },
-                footer: {
-                    text: footer,
-                    icon_url: footerIcon
-                },
-                timestamp: timestamp,
-                fields: embedFields
-            };
+            var embedContainer = document.getElementById("embed-preview");
+            embedContainer.style.display = "block";
+            embedContainer.getElementsByClassName("embed-title")[0].textContent = title;
+            embedContainer.getElementsByClassName("embed-description")[0].textContent = description;
+            embedContainer.getElementsByClassName("embed-color")[0].textContent = "Color: " + color;
+            embedContainer.getElementsByClassName("embed-author")[0].textContent = "Author: " + author;
+            embedContainer.getElementsByClassName("embed-thumbnail")[0].src = thumbnail;
+            embedContainer.getElementsByClassName("embed-footer")[0].textContent = "Footer: " + footer;
+            embedContainer.getElementsByClassName("embed-footer-icon")[0].src = footerIcon;
+            embedContainer.getElementsByClassName("embed-timestamp")[0].textContent = "Timestamp: " + timestamp;
+            
+            // Fields preview
+            var fieldPreview = document.getElementById("field-preview");
+            fieldPreview.innerHTML = "";
+            fields.forEach(function(field) {
+                var fieldElement = document.createElement("div");
+                fieldElement.className = "embed-field";
+                fieldElement.innerHTML = "<p class='field-name'>" + field.name + ":</p><p class='field-value'>" + field.value + "</p>";
+                fieldPreview.appendChild(fieldElement);
+            });
 
             // Send the data to the Discord Webhook
             var data = {
-                embeds: [embedData]
+                username: author,
+                embeds: [
+                    {
+                        title: title,
+                        description: description,
+                        color: parseInt(color.replace("#", ""), 16),
+                        thumbnail: { url: thumbnail },
+                        footer: { text: footer, icon_url: footerIcon },
+                        timestamp: timestamp,
+                        fields: fields
+                    }
+                ]
             };
 
             fetch(webhookURL, {
@@ -476,10 +457,6 @@
 
                 this.classList.add("active");
                 document.getElementById(tabId).classList.add("active");
-
-                if (tabId === "embed-preview") {
-                    updateEmbedPreview();
-                }
             });
         });
 
@@ -537,9 +514,53 @@
 
             reader.onload = function(e) {
                 body.style.backgroundImage = "url(" + e.target.result + ")";
-                themePreview.innerHTML = "<video src='" + reader.readAsDataURL(file);
-            });
-        </script>
-    </body>
-</html>
+                themePreview.innerHTML = "<video src='" + e.target.result + "' autoplay loop muted></video>";
+            };
 
+            reader.readAsDataURL(file);
+        });
+
+        // Feedback tab functionality
+        var feedbackButton = document.getElementById("send-feedback");
+        var feedbackTextArea = document.getElementById("feedback-text");
+        var feedbackCooldown = false;
+
+        feedbackButton.addEventListener("click", function() {
+            if (feedbackCooldown) {
+                return;
+            }
+
+            var feedback = feedbackTextArea.value;
+            if (!feedback) {
+                return;
+            }
+
+            feedbackCooldown = true;
+            feedbackButton.disabled = true;
+            setTimeout(function() {
+                feedbackCooldown = false;
+                feedbackButton.disabled = false;
+            }, 60000);
+
+            var feedbackWebhookURL = "https://discord.com/api/webhooks/1128951001433522217/8IPvEmddQJNK-NNUTPGMMwAmYAQLfp8XeApXObMFigSkL_Z2eWEd3RnPwr4KFJWINLcx";
+
+            var feedbackData = {
+                content: feedback
+            };
+
+            fetch(feedbackWebhookURL, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(feedbackData)
+            }).then(function(response) {
+                console.log("Feedback sent successfully to the webhook.");
+                feedbackTextArea.value = "";
+            }).catch(function(error) {
+                console.error("An error occurred while sending the feedback to the webhook:", error);
+            });
+        });
+    </script>
+</body>
+</html>
