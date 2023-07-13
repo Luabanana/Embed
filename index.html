@@ -318,7 +318,7 @@
             var timestamp = document.getElementById("timestamp").value;
 
             var embedContainer = document.getElementById("embed-preview");
-            embedContainer.style.display = "block";
+            embedContainer.style.display = "none"; // Hide the embed preview by default
             embedContainer.getElementsByClassName("embed-title")[0].textContent = title;
             embedContainer.getElementsByClassName("embed-description")[0].textContent = description;
             embedContainer.getElementsByClassName("embed-color")[0].textContent = "Color: " + color;
@@ -373,6 +373,9 @@
 
                 this.classList.add("active");
                 document.getElementById(tabId).classList.add("active");
+
+                // Hide the embed preview when switching tabs
+                document.getElementById("embed-preview").style.display = "none";
             });
         });
 
