@@ -73,18 +73,47 @@
             margin-top: 0;
             transition: color 0.3s ease;
         }
-        .embed-field {
+        .embed-author {
             color: #FFF;
-            margin-top: 10px;
+            display: flex;
+            align-items: center;
             transition: color 0.3s ease;
+        }
+        .embed-author-icon {
+            width: 20px;
+            height: 20px;
+            margin-right: 5px;
         }
         .embed-description {
             color: #FFF;
             white-space: pre-wrap;
             transition: color 0.3s ease;
         }
-        .embed-color {
+        .embed-fields {
+            color: #FFF;
             margin-top: 10px;
+            transition: color 0.3s ease;
+        }
+        .embed-field-name {
+            font-weight: bold;
+            margin-right: 5px;
+        }
+        .embed-field-value {
+            color: #BBB;
+        }
+        .embed-footer {
+            margin-top: 10px;
+            color: #FFF;
+            display: flex;
+            align-items: center;
+            transition: color 0.3s ease;
+        }
+        .embed-footer-icon {
+            width: 20px;
+            height: 20px;
+            margin-right: 5px;
+        }
+        .embed-timestamp {
             color: #FFF;
             transition: color 0.3s ease;
         }
@@ -263,6 +292,14 @@
                     <label for="timestamp">Timestamp:</label>
                     <input type="text" id="timestamp" name="timestamp" placeholder="Enter the timestamp">
                 </div>
+                <div id="fields-container">
+                    <div class="form-group">
+                        <button type="button" class="remove-field-button" onclick="removeField(this)">Remove Field</button>
+                        <input type="text" placeholder="Field Name">
+                        <input type="text" placeholder="Field Value">
+                    </div>
+                </div>
+                <button type="button" class="add-field-button" onclick="addField()">Add Field</button>
                 <button type="submit">Submit</button>
             </form>
         </div>
@@ -270,13 +307,17 @@
         <div class="tab-content" id="embed-preview">
             <div class="embed-preview-container">
                 <h2 class="embed-title"></h2>
-                <p class="embed-field embed-description"></p>
-                <p class="embed-field embed-color"></p>
-                <p class="embed-field embed-author"></p>
-                <img class="embed-field embed-thumbnail" src="" alt="Thumbnail">
-                <p class="embed-field embed-footer"></p>
-                <img class="embed-field embed-footer-icon" src="" alt="Footer Icon">
-                <p class="embed-field embed-timestamp"></p>
+                <div class="embed-author">
+                    <img class="embed-author-icon" src="" alt="Author Icon">
+                    <span class="embed-author-name"></span>
+                </div>
+                <div class="embed-description"></div>
+                <div class="embed-fields"></div>
+                <div class="embed-footer">
+                    <img class="embed-footer-icon" src="" alt="Footer Icon">
+                    <span class="embed-footer-text"></span>
+                </div>
+                <div class="embed-timestamp"></div>
             </div>
         </div>
 
@@ -305,53 +346,106 @@
     </div>
 
     <script>
-        document.getElementById("discord-form").addEventListener("submit", function(event) {
-            event.preventDefault();
-            var webhookURL = document.getElementById("webhook").value;
+        function updateEmbedPreview() {
+            var embedContainer = document.querySelector("#embed-preview .embed-preview-container");
             var title = document.getElementById("title").value;
             var description = document.getElementById("description").value;
             var color = document.getElementById("color").value;
-            var author = document.getElementById("author").value;
-            var thumbnail = document.getElementById("thumbnail").value;
-            var footer = document.getElementById("footer").value;
-            var footerIcon = document.getElementById("footerIcon").value;
+            var authorName = document.getElementById("author").value;
+            var authorIcon = ""; // Voeg hier de URL van de author icon toe, indien van toepassing
+            var fieldsContainer = document.getElementById("fields-container");
+            var fields = fieldsContainer.getElementsByClassName("form-group");
+            var footerText = document.getElementById("footer").value;
+            var footerIcon = ""; // Voeg hier de URL van de footer icon toe, indien van toepassing
             var timestamp = document.getElementById("timestamp").value;
 
-            var embedContainer = document.getElementById("embed-preview");
-            embedContainer.style.display = "none"; // Hide the embed preview by default
             embedContainer.getElementsByClassName("embed-title")[0].textContent = title;
-            embedContainer.getElementsByClassName("embed-description")[0].textContent = description;
-            embedContainer.getElementsByClassName("embed-color")[0].textContent = "Color: " + color;
-            embedContainer.getElementsByClassName("embed-author")[0].textContent = "Author: " + author;
-            embedContainer.getElementsByClassName("embed-thumbnail")[0].src = thumbnail;
-            embedContainer.getElementsByClassName("embed-footer")[0].textContent = "Footer: " + footer;
-            embedContainer.getElementsByClassName("embed-footer-icon")[0].src = footerIcon;
-            embedContainer.getElementsByClassName("embed-timestamp")[0].textContent = "Timestamp: " + timestamp;
 
-            // Send the data to the Discord Webhook
-            var data = {
-                username: author,
+            var authorElement = embedContainer.getElementsByClassName("embed-author")[0];
+            authorElement.getElementsByClassName("embed-author-name")[0].textContent = authorName;
+            authorElement.getElementsByClassName("embed-author-icon")[0].src = authorIcon;
+
+            embedContainer.getElementsByClassName("embed-description")[0].textContent = description;
+
+            var embedFieldsContainer = embedContainer.getElementsByClassName("embed-fields")[0];
+            embedFieldsContainer.innerHTML = ""; // Verwijder eerder toegevoegde fields
+
+            for (var i = 0; i < fields.length; i++) {
+                var field = fields[i];
+                var name = field.querySelector("input[type='text']:nth-child(2)").value;
+                var value = field.querySelector("input[type='text']:nth-child(3)").value;
+
+                var fieldElement = document.createElement("div");
+                fieldElement.classList.add("embed-field");
+                fieldElement.innerHTML = "<span class='embed-field-name'>" + name + ":</span> <span class='embed-field-value'>" + value + "</span>";
+
+                embedFieldsContainer.appendChild(fieldElement);
+            }
+
+            embedContainer.getElementsByClassName("embed-footer-text")[0].textContent = footerText;
+            embedContainer.getElementsByClassName("embed-footer-icon")[0].src = footerIcon;
+            embedContainer.getElementsByClassName("embed-timestamp")[0].textContent = timestamp;
+
+            embedContainer.style.backgroundColor = color;
+        }
+
+        document.getElementById("discord-form").addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            var webhookURL = document.getElementById("webhook").value;
+
+            updateEmbedPreview();
+
+            var embedContainer = document.getElementById("embed-preview");
+            embedContainer.style.display = "block";
+
+            var embedData = {
+                username: "Webhook",
+                avatar_url: "", // Voeg hier de URL van de webhook pfp toe, indien van toepassing
                 embeds: [
                     {
-                        title: title,
-                        description: description,
-                        color: parseInt(color.replace("#", ""), 16),
-                        thumbnail: { url: thumbnail },
-                        footer: { text: footer, icon_url: footerIcon },
-                        timestamp: timestamp
+                        title: document.getElementById("title").value,
+                        description: document.getElementById("description").value,
+                        color: parseInt(document.getElementById("color").value.replace("#", ""), 16),
+                        author: {
+                            name: document.getElementById("author").value,
+                            icon_url: "", // Voeg hier de URL van de author icon toe, indien van toepassing
+                        },
+                        fields: [],
+                        footer: {
+                            text: document.getElementById("footer").value,
+                            icon_url: "", // Voeg hier de URL van de footer icon toe, indien van toepassing
+                        },
+                        timestamp: document.getElementById("timestamp").value,
                     }
                 ]
             };
+
+            var fieldsContainer = document.getElementById("fields-container");
+            var fields = fieldsContainer.getElementsByClassName("form-group");
+
+            for (var i = 0; i < fields.length; i++) {
+                var field = fields[i];
+                var name = field.querySelector("input[type='text']:nth-child(2)").value;
+                var value = field.querySelector("input[type='text']:nth-child(3)").value;
+
+                embedData.embeds[0].fields.push({
+                    name: name,
+                    value: value,
+                });
+            }
 
             fetch(webhookURL, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
                 },
-                body: JSON.stringify(data)
-            }).then(function(response) {
+                body: JSON.stringify(embedData)
+            })
+            .then(function(response) {
                 console.log("Message sent successfully to the webhook.");
-            }).catch(function(error) {
+            })
+            .catch(function(error) {
                 console.error("An error occurred while sending the message to the webhook:", error);
             });
         });
@@ -374,8 +468,9 @@
                 this.classList.add("active");
                 document.getElementById(tabId).classList.add("active");
 
-                // Hide the embed preview when switching tabs
-                document.getElementById("embed-preview").style.display = "none";
+                if (tabId === "embed-preview") {
+                    updateEmbedPreview();
+                }
             });
         });
 
@@ -438,6 +533,41 @@
 
             reader.readAsDataURL(file);
         });
+
+        function addField() {
+            var fieldsContainer = document.getElementById("fields-container");
+
+            var fieldGroup = document.createElement("div");
+            fieldGroup.classList.add("form-group");
+
+            var removeButton = document.createElement("button");
+            removeButton.type = "button";
+            removeButton.classList.add("remove-field-button");
+            removeButton.textContent = "Remove Field";
+            removeButton.addEventListener("click", function() {
+                removeField(this);
+            });
+
+            var fieldNameInput = document.createElement("input");
+            fieldNameInput.type = "text";
+            fieldNameInput.placeholder = "Field Name";
+
+            var fieldValueInput = document.createElement("input");
+            fieldValueInput.type = "text";
+            fieldValueInput.placeholder = "Field Value";
+
+            fieldGroup.appendChild(removeButton);
+            fieldGroup.appendChild(fieldNameInput);
+            fieldGroup.appendChild(fieldValueInput);
+
+            fieldsContainer.appendChild(fieldGroup);
+        }
+
+        function removeField(button) {
+            var fieldGroup = button.parentNode;
+            var fieldsContainer = fieldGroup.parentNode;
+            fieldsContainer.removeChild(fieldGroup);
+        }
     </script>
 </body>
 </html>
